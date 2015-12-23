@@ -47,7 +47,12 @@ function Invoke-InitialDeploy{
     pushd "$($env:SystemDrive)\Octopus\OctopusTools\"
     foreach ($environment in $environments){
         Write-Verbose "Deploying Project $Project to environment $environment"
-        $deployArguments = @("deploy-release", "--project", $Project, "--deployto", $environment, "--releaseNumber", $Version, "--specificmachines", $env:COMPUTERNAME, "--server", $octopusServerUrl, "--apiKey", $apiKey)
+        if($Version -eq 'latest') {
+            $deployArguments = @("deploy-release", "--project", $Project, "--deployto", $environment, "--releaseNumber", $Version, "--specificmachines", $env:COMPUTERNAME, "--server", $octopusServerUrl, "--apiKey", $apiKey)
+        }
+        else {
+            $deployArguments = @("deploy-release", "--project", $Project, "--deployto", $environment, "--version=latest", "--specificmachines", $env:COMPUTERNAME, "--server", $octopusServerUrl, "--apiKey", $apiKey)
+        }
         if ($Wait){
             $deployArguments += "--waitfordeployment"
         }
